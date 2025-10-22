@@ -1,4 +1,4 @@
-# Movie_Ticket_Booking_Management System
+# Movie_Ticket_Booking_Management_System
 🎟️ Movie Ticket Booking Management System
 
 A simple Python-based Movie Ticket Booking Management System that enables users to create, view, update, and delete movie ticket bookings.
