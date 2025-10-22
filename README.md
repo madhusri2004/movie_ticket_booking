@@ -1,4 +1,5 @@
-#🎟️ Movie Ticket Booking Management System
+# Movie_Ticket_Booking_Management System
+🎟️ Movie Ticket Booking Management System
 
 A simple Python-based Movie Ticket Booking Management System that enables users to create, view, update, and delete movie ticket bookings.
 This project uses a dictionary to store booking details and runs entirely in the terminal.
@@ -50,6 +51,7 @@ Enter Name: Alice
 Enter Movie Name: Dune 2
 Enter Number of Tickets: 3
 Booking created successfully!
+
 🧰 Technologies Used
 
 Python 3.x
