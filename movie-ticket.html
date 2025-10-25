@@ -109,6 +109,69 @@
       margin-top: 10px;
       font-style: italic;
     }
+
+    /* Popup Modal Styles */
+    .popup {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.5);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+    }
+
+    .popup-content {
+      background: white;
+      border-radius: 10px;
+      padding: 25px 30px;
+      text-align: center;
+      width: 320px;
+      box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+      animation: fadeIn 0.3s ease;
+    }
+
+    @keyframes fadeIn {
+      from { transform: scale(0.8); opacity: 0; }
+      to { transform: scale(1); opacity: 1; }
+    }
+
+    .popup-content h3 {
+      margin: 0;
+      color: #2c3e50;
+      font-size: 1.3em;
+    }
+
+    .popup-content p {
+      margin-top: 10px;
+      color: #555;
+    }
+
+    .popup-content button {
+      margin-top: 15px;
+      width: 100px;
+      padding: 8px;
+      border-radius: 6px;
+    }
+
+    .confirm-btn {
+      background-color: #27ae60;
+    }
+
+    .cancel-btn {
+      background-color: #e74c3c;
+    }
+
+    .confirm-btn:hover {
+      background-color: #1e8449;
+    }
+
+    .cancel-btn:hover {
+      background-color: #c0392b;
+    }
   </style>
 </head>
 <body>
@@ -140,10 +203,26 @@
     <p class="empty" id="emptyMsg">No bookings available.</p>
   </div>
 
+  <!-- Popup Modal -->
+  <div id="popup" class="popup">
+    <div class="popup-content">
+      <h3 id="popupTitle">Message</h3>
+      <p id="popupText">This is a popup message.</p>
+      <div id="popupButtons">
+        <button class="confirm-btn" onclick="closePopup()">OK</button>
+      </div>
+    </div>
+  </div>
+
   <script>
     const bookingForm = document.getElementById("bookingForm");
     const bookingList = document.getElementById("bookingList");
     const emptyMsg = document.getElementById("emptyMsg");
+
+    const popup = document.getElementById("popup");
+    const popupTitle = document.getElementById("popupTitle");
+    const popupText = document.getElementById("popupText");
+    const popupButtons = document.getElementById("popupButtons");
 
     let bookings = JSON.parse(localStorage.getItem("bookings")) || {};
 
@@ -166,7 +245,7 @@
             <td>${numTickets}</td>
             <td class="actions">
               <button class="edit-btn" onclick="editBooking('${id}')">Edit</button>
-              <button class="delete-btn" onclick="deleteBooking('${id}')">Delete</button>
+              <button class="delete-btn" onclick="confirmDelete('${id}')">Delete</button>
             </td>
           </tr>`;
         bookingList.insertAdjacentHTML("beforeend", row);
@@ -182,7 +261,7 @@
       const numTickets = document.getElementById("numTickets").value;
 
       if (!id || !name || !movieName || numTickets <= 0) {
-        alert("⚠️ Please fill in all fields correctly.");
+        showPopup("Error", "⚠️ Please fill in all fields correctly.");
         return;
       }
 
@@ -190,7 +269,7 @@
       localStorage.setItem("bookings", JSON.stringify(bookings));
       bookingForm.reset();
       renderBookings();
-      alert("✅ Booking saved successfully!");
+      showPopup("Success", "✅ Booking saved successfully!");
     });
 
     function editBooking(id) {
@@ -199,15 +278,35 @@
       document.getElementById("name").value = booking.name;
       document.getElementById("movieName").value = booking.movieName;
       document.getElementById("numTickets").value = booking.numTickets;
+      showPopup("Edit Mode", "✏️ Booking loaded for editing.");
+    }
+
+    function confirmDelete(id) {
+      popupTitle.textContent = "Confirm Delete";
+      popupText.textContent = "Are you sure you want to delete this booking?";
+      popupButtons.innerHTML = `
+        <button class="confirm-btn" onclick="deleteBooking('${id}')">Yes</button>
+        <button class="cancel-btn" onclick="closePopup()">No</button>
+      `;
+      popup.style.display = "flex";
     }
 
     function deleteBooking(id) {
-      if (confirm("Are you sure you want to delete this booking?")) {
-        delete bookings[id];
-        localStorage.setItem("bookings", JSON.stringify(bookings));
-        renderBookings();
-        alert("🗑️ Booking deleted successfully!");
-      }
+      delete bookings[id];
+      localStorage.setItem("bookings", JSON.stringify(bookings));
+      renderBookings();
+      showPopup("Deleted", "🗑️ Booking deleted successfully!");
+    }
+
+    function showPopup(title, message) {
+      popupTitle.textContent = title;
+      popupText.textContent = message;
+      popupButtons.innerHTML = `<button class="confirm-btn" onclick="closePopup()">OK</button>`;
+      popup.style.display = "flex";
+    }
+
+    function closePopup() {
+      popup.style.display = "none";
     }
 
     renderBookings();
